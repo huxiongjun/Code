@@ -1,0 +1,36 @@
+注解:一种代码级别的说明,和类,接口是平级关系
+    相当于一种标记,在程序中加入注解,就等于为程序打上某种标记.以后,javac编译器,开发工具和其他程序可以通过反射来了解这个类上面有没有标记,
+对应的标记去做对应的事情.
+注解属性:
+        1.基本类型
+        2.String
+        3.枚举类型
+        4.Class类型
+        5.注解类型
+        6.以上类型的一位数组类型
+   注意:
+        一旦注解有了属性,使用注解的时候,属性必须有值
+        若属性名为value的时候,且只有这一个属性需要赋值的时候可以省略value
+        若属性类型的一维数组的时候,当数组的值只有一个的时候可以省略{}
+   元注解:
+   @Target:定义该注解作用在什么上面(位置),==默认注解可以在====任何位置==. 值为:ElementType的枚举值
+   		METHOD:方法
+   		TYPE:类 接口
+   		FIELD:字段
+   		CONSTRUCTOR:构造方法声明
+   @Retention:定义该注解保留到那个代码阶段, 值为:RetentionPolicy类型,==默认只在源码阶段保留==
+   		SOURCE:只在源码上保留(默认)
+   		CLASS:在源码和字节码上保留
+   		RUNTIME:在所有的阶段都保留
+   注解解析:
+   - T getAnnotation(Class<T>annotationType):得到指定类型的注解引用。没有返回null。
+   - boolean isAnnotationPresent(Class<?extends Annotation> annotationType)：判断指定的注解有没有。
+     Class、Method、Field、Constructor等实现了AnnotatedElement接口.
+   - Annotation[] getAnnotations()：得到所有的注解，包含从父类继承下来的。
+   - Annotation[] getDeclaredAnnotations()：得到自己身上的注解。
+   - Annotation.value(): 得到注解上面的注解值
+
+
+
+
+

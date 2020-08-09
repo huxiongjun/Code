@@ -7,6 +7,74 @@
     <groupId>com.hu</groupId>
     <artifactId>Hu-Parent</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <description>这是我学习的父工程文件</description>
+    <modules>
+        <module>Hu-Eureka</module>
+        <module>Hu-Gateway</module>
+        <module>Hu-Service</module>
+        <module>Hu-common</module>
+        <module>Hu-common-db</module>
+    </modules>
+    <packaging>pom</packaging><!--聚合工程打包为pom用于版本控制-->
+
+    <!--SpringBoot父工程依赖-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.4.RELEASE</version>
+    </parent>
+
+    <!--对应的需要引入的组件依赖包-->
+    <dependencies>
+        <!--测试包启动类-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <!--fastJson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.51</version>
+        </dependency>
+
+        <!--鉴权-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
+        <!--swagger文档-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+
+        <!--
+            http://localhost:9011/swagger-ui.html
+        -->
+
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Greenwich.SR1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>

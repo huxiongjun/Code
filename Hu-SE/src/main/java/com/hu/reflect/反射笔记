@@ -1,0 +1,5 @@
+反射是一种机制: 反射乃是框架的灵魂
+获得class 对象的三种方法:
+    1.对象.getClass()
+    2.Class.forName("类的全限定名")
+    3.类.class
