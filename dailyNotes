@@ -23,3 +23,58 @@
     @Async 注解,在日志记录方法中.异步调用,无需等待方法返回,提高效率
     String bagId = UUID.randomUUID().toString();
 3.跨库查询,即调用其他微服务
+添加到购物车:
+        LOGGER.methodStartLog("addBagItem");
+        // 校验商品状态
+        isValidOffering(headers, reqBean);
+        // 校验客户收认证
+        validateCustomer.validateCustomerIsAuthed(headers, reqBean.getOrderBasic().getCustomerId());
+        // 获取请求的所有商品实例Id用于校验
+        List<String> reqOfferingInstIds = getReqOfferingInstIds(reqBean);
+        String bagItemId = reqBean.getOrderBasic().getBagItemId();
+        // 校验传入的bagItemId是否已经在购物袋中
+        checkBagItemId(Arrays.asList(bagItemId));
+        // 校验入参的商品属性
+        checkOrderItemAttr(reqBean.getOrderItems(), headers);
+        String bagId = UUID.randomUUID().toString();
+        String customerId = reqBean.getOrderBasic().getCustomerId();
+        // 根据custerId查询bag是否存在
+        List<BagInfoPO> bags = bagMapper.queryBagInfoWithCustId(customerId);
+        if (CollectionUtils.isNotEmpty(bags)) {
+            // 校验购物袋是否已满
+            checkBagFull(bags);
+            // 校验货币是否一致
+            List<String> currencyCodes = bags.stream().map(item -> item.getCurrencyCode()).distinct().collect(Collectors.toList());
+            checkCurrencyCode(reqBean.getCurrencyCode(), currencyCodes);
+            // 校验传入的商品实例是否已经在购物袋中
+            List<String> offeringInstIds = bagMapper.queryBagOfferInstIdByCustId(customerId);
+            checkOfferingInstId(reqOfferingInstIds, offeringInstIds);
+            // 如果购物袋已存在使用其bagId
+            bagId = bags.get(0).getBagId();
+        }
+        saveBagItem(headers, reqBean, bagId, bagItemId);
+        LOGGER.methodEndLog("addBagItem");
+		saveBagItem 对应的方法实现:
+		// 游客场景
+        if(StringUtils.isEmpty(headers.getOperatorId())) {
+            headers.setOperatorId("Tourist");
+        }
+        // 保存购物袋信息
+        saveOrderBagInfo(headers, reqBean, bagId, bagItemId);
+        // 保存购物袋基本信息
+        saveOrderBagBasicInfo(reqBean, headers, bagItemId);
+        // 构造购物袋项和购物袋项属性列表
+        List<BagOrderItemPO> orderItems = new ArrayList<>();
+        buildOrderItemPOs(reqBean, orderItems, bagItemId);       
+        // 保存购物袋项信息
+        saveOrderItems(headers, orderItems);      
+        // 保存购物袋项属性信息
+        saveOrderItemAttrs(headers, getOrderItemAttrs(orderItems));  
+        // 保存购物袋项业务操作信息
+        saveOrderItemBusiOperation(headers, getOrderItemBusiOperation(orderItems));
+		
+		BagOrderBasicPO po = new BagOrderBasicPO();
+        po.initWithHeaders(headers);
+        BeanUtils.copyProperties(reqBean.getOrderBasic(), po);
+        po.setBusiId(po.getBusinessId());
+        po.setBagItemId(bagItemId);
