@@ -1,0 +1,24 @@
+1.调用微服务的工具类工程: order-client-sdk
+		封装restTemplate 发送请求
+2.增删改 需要记录操作日志到kafka
+		 kafkaLogUtil.sendAddBagSucLog(headers, reqBean.getOrderBasic().getBagItemId());
+		 kafkaLogUtil.sendAddBagFailLog(headers, reqBean.getOrderBasic().getBagItemId());
+     @Async
+    /**
+     * 发送创建订单成功操作日志
+     * 
+     * @param headers 请求头
+     * @param objectId 变更对象的标识码
+     */
+    public void sendCreateOrderSuccessedLog(CommonHeaders headers, String objectId) {
+        LOGGER.methodStartLog("sendCreateOrderSuccessedLog", "objectId : ", objectId);
+        CustomerOperationLog customerOperationLog = new CustomerOperationLog();
+        customerOperationLog.setResultFlag(Constants.RESULT_FLAG_SUCCESS);
+        customerOperationLog.setOperateType(CustomerLogOperateType.OPERATE_TYPE_CREATE_ORDER);
+        customerOperationLog.setObjectId(objectId);
+        customerOperationLog.setNewContent("CreateOrder");
+        buildCommon(customerOperationLog, headers);
+        LOGGER.methodEndLog("sendCreateOrderSuccessedLog");
+
+    }
+		 @Async 注解,在日志记录方法中.异步调用,无需等待方法返回,提高效率
