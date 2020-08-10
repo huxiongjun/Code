@@ -19,6 +19,7 @@
         customerOperationLog.setNewContent("CreateOrder");
         buildCommon(customerOperationLog, headers);
         LOGGER.methodEndLog("sendCreateOrderSuccessedLog");
-
     }
-		 @Async 注解,在日志记录方法中.异步调用,无需等待方法返回,提高效率
+    @Async 注解,在日志记录方法中.异步调用,无需等待方法返回,提高效率
+    String bagId = UUID.randomUUID().toString();
+3.跨库查询,即调用其他微服务
