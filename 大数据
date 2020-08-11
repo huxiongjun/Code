@@ -1,3 +1,18 @@
-Hadoop
-Storm
-Spark
+Hadoop:Hadoop是使用Java编写，允许分布在集群，使用简单的编程模型的计算机大型数据集处理的Apache的开源框架。 Hadoop框架应用工程提供跨计算机集群的分布式存储和计算的环境。
+        Hadoop是专为从单一服务器到上千台机器扩展，每个机器都可以提供本地计算和存储。
+Storm:Storm是Twitter主推的分布式计算系统，它由BackType团队开发，是Apache基金会的孵化项目。它在Hadoop的基础上提供了实时运算的特性，可以实时的处理大数据流。
+        不同于Hadoop和Spark，Storm不进行数据的收集和存储工作，它直接通过网络实时的接受数据并且实时的处理数据，然后直接通过网络实时的传回结果。
+Spark:Spark也是Apache基金会的开源项目，它由加州大学伯克利分校的实验室开发，是另外一种重要的分布式计算系统。它在Hadoop的基础上进行了一些架构上的改良。Spark与Hadoop最大的不同点在于，
+        Hadoop使用硬盘来存储数据，而Spark使用内存来存储数据，因此Spark可以提供超过Hadoop100倍的运算速度。但是，由于内存断电后会丢失数据，Spark不能用于处理需要长期保存的数据。
+Hadoop是Apache的一个分布式系统基础架构，可以为海量数据提供存储和计算。Hadoop 2.0即第二代Hadoop系统，其框架最核心的设计是HDFS、MapReduce和YARN。
+        其中，HDFS为海量数据提供存储，MapReduce用于分布式计算，YARN用于进行资源管理。
+        
+    Hadoop 2.0的主要改进有：
+
+　　1、通过YARN实现资源的调度与管理，从而使Hadoop 2.0可以运行更多种类的计算框架，如Spark等。
+
+　　2、实现了NameNode的HA方案，即同时有2个NameNode（一个Active另一个Standby），如果ActiveNameNode挂掉的话，另一个NameNode会转入Active状态提供服务，保证了整个集群的高可用。
+
+　　3、实现了HDFS federation，由于元数据放在NameNode的内存当中，内存限制了整个集群的规模，通过HDFS federation使多个NameNode组成一个联邦共同管理DataNode，这样就可以扩大集群规模。
+
+　　4、Hadoop RPC序列化扩展性好，通过将数据类型模块从RPC中独立出来，成为一个独立的可插拔模块。
