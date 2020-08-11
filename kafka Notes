@@ -1,0 +1,84 @@
+kafka 学习笔记:
+sprngBoot 整合kafka
+步骤:
+1.kafka 的运行依赖于zookeeper,所以需要先安装运行zookeeper
+2.安装kafka 修改log 存放位置
+3.运行命令:.\bin\windows\kafka-server-start.bat .\config\server.properties
+============以上步骤,安装好kafka 和zoookeeper 然后启动
+4. 引入kafka 依赖
+		<dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+5.在spring容器中配置消息生产者====消息发送者
+5.在spring容器中配置消息消费者====消息接收者
+
+Consumer:
+/**
+ * @author hWX5330293
+ */
+@Configuration
+public class KafkaConsumer {
+    private static Logger log = LoggerFactory.getLogger(KafkaProducer.class);
+
+    /**
+     * 消费者
+     */
+    @KafkaListener(topics = {"Topic_01"})
+    public void listenMessage(ConsumerRecord<?, ?> record) {
+        Optional<?> kafkaMessage = Optional.ofNullable(record.value());
+        if (kafkaMessage.isPresent()) {
+            Object message = kafkaMessage.get();
+            log.info("收到消息_message =" + message);
+        }
+    }
+}
+
+Producer:
+/**
+ * @author hWX5330293
+ */
+@Configuration
+public class KafkaProducer {
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    private static Logger log = LoggerFactory.getLogger(KafkaProducer.class);
+
+    private Gson gson = new GsonBuilder().create();
+
+    /**
+     * 发送消息方法
+     */
+    public void send() {
+        Message message = new Message();
+        message.setId(System.currentTimeMillis());
+        message.setMsg(UUID.randomUUID().toString());
+        message.setSendTime(new Date());
+        log.info("发送消息:{}",gson.toJson(message));
+        kafkaTemplate.send("Topic_01", gson.toJson(message));
+    }
+}
+application.properties
+# 指定kafka 代理地址，可以多个
+spring.kafka.bootstrap-servers=127.0.0.1:9092
+
+server.port=8080
+
+#=============== provider  =======================
+spring.kafka.producer.retries=0
+# 每次批量发送消息的数量
+spring.kafka.producer.batch-size=16384
+spring.kafka.producer.buffer-memory=33554432
+# 指定生产者消息key和消息体的编解码方式
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+#=============== consumer  =======================
+# 指定默认消费者group id
+spring.kafka.consumer.group-id=test-consumer-group
+spring.kafka.consumer.auto-offset-reset=earliest
+spring.kafka.consumer.enable-auto-commit=true
+spring.kafka.consumer.auto-commit-interval=100
+# 指定消费者消息key和消息体的编解码方式
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
