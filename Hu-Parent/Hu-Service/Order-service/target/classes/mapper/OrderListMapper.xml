@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hu.orderList.mapper.OrderListMapper">
+    <select id="queryOrderListByOrderId" parameterType="string" resultType="com.hu.orderList.model.OrderListResponseBean">
+        select
+        id,
+        total_Num totalNum,
+        total_money totalMoney,
+        pre_money preMoney,
+        post_fee postFee,
+        username userName
+        from
+        tb_order o where o.id like CONCAT('%',#{orderId},'%')
+    </select>
+</mapper>

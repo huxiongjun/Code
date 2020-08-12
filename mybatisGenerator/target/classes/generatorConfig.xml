@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!--导入属性配置-->
+    <properties resource="datasource.properties"></properties>
+
+    <!-- 指定数据库驱动的jdbc驱动jar包的位置 -->
+    <classPathEntry location="${db.driverLocation}"/>
+
+    <context id="MySqlDB" targetRuntime="MyBatis3">
+        <!--屏蔽掉注释信息-->
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--jdbc的数据库连接-->
+        <jdbcConnection driverClass="${db.driverClassName}"
+                        connectionURL="${db.url}"
+                        userId="${db.username}"
+                        password="${db.password}">
+        </jdbcConnection>
+
+
+        <!--        &lt;!&ndash;数据库链接地址账号密码&ndash;&gt;-->
+        <!--        <jdbcConnection driverClass="com.mysql.jdbc.Driver"-->
+        <!--                        connectionURL="jdbc:mysql://127.0.0.1:3306/deep_order?serverTimezone=GMT" userId="root"-->
+        <!--                        password="">-->
+        <!--        </jdbcConnection>-->
+
+        <!--配置的属性为forceBigDecimals，该属性可以控制是否强制DECIMAL和NUMERIC类型的字段转换为Java类型的java.math.BigDecimal,默认值为false，一般不需要配置。
+        默认情况下的转换规则为：
+        如果精度>0或者长度>18，就会使用java.math.BigDecimal
+        如果精度=0并且10<=长度<=18，就会使用java.lang.Long
+        如果精度=0并且5<=长度<=9，就会使用java.lang.Integer
+        如果精度=0并且长度<5，就会使用java.lang.Short
+        如果设置为true，那么一定会使用java.math.BigDecimal-->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+
+        <!--数据库对应实体类生成Model类存放位置 该元素必须配置一个，并且最多一个-->
+        <javaModelGenerator targetPackage="com.huawei.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!--生成映射文件存放位置-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!--生成mapper接口 需要配置生成Dao类存放位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.huawei.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--生成对应表及类名-->
+        <table tableName="${db.tableName}" domainObjectName="${db.entityName}"
+               enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true"
+               enableSelectByExample="true" selectByExampleQueryId="true">
+            <!--        <table tableName="%">-->
+            <!--这个元素用来指定自动生成主键的属性（identity字段或者sequences序列）。如果指定这个元素，MBG在生成insert的SQL映射文件中插入一个<selectKey>元素。-->
+            <generatedKey column="id" sqlStatement="Mysql"/>
+        </table>
+
+    </context>
+</generatorConfiguration>

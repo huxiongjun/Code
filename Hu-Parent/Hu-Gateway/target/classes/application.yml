@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: spring-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # 跨域处理,允许所有的域
+            allowedOrigins: "*"
+            # 支持的方法 -值表示数组中的一个元素
+            alloewdMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+      routes:
+        #某个微服务 构成部分:一个id 一个目标URI 一组断言 一组过滤器
+        #lb代表从注册中心获取服务，且已负载均衡方式转发
+        - id: hu_order_route
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1 # 去除路径的第一个前缀
+server:
+  port: 8889
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true #是否将自己注册到eureka中
+    fetch-registry: true #是否从eureka中获取信息
+    service-url: # Eureka 注册中心的地址
+      defaultZone: http://127.0.0.1:8888/eureka/ # 这里应该用全局的配置参数 避免硬编码
