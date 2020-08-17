@@ -1,0 +1,37 @@
+package com.hu.orderList.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+
+
+@Component
+public class TestUtil {
+
+    private static TestProperties testProperties;
+
+    @Autowired @Qualifier("testProperties") private TestProperties properties;
+
+    public static TestProperties getTestProperties() {
+        return testProperties;
+    }
+
+    @PostConstruct
+    public void setTestProperties() {
+        if (TestUtil.testProperties == null) {
+            synchronized (TestUtil.class) {
+                if (TestUtil.testProperties == null) {
+                    TestUtil.testProperties = this.properties;
+                }
+            }
+        }
+    }
+
+    public static void getProperties() {
+        System.out.println(TestUtil.getTestProperties().getName());
+        System.out.println(TestUtil.getTestProperties().getName());
+        System.out.println(TestUtil.getTestProperties().getName());
+    }
+}
