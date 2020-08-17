@@ -9,10 +9,12 @@ import javax.annotation.PostConstruct;
 
 @Component
 public class TestUtil {
-
+    // 声明对象的引用
     private static volatile TestProperties testProperties;
 
-    @Autowired @Qualifier("testProperties") private TestProperties properties;
+    @Autowired 
+    @Qualifier("testProperties") 
+    private TestProperties properties;
 
     public static TestProperties getTestProperties() {
         return testProperties;
