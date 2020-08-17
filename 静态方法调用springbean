@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class TestUtil {
 
-    private static TestProperties testProperties;
+    private static volatile TestProperties testProperties;
 
     @Autowired @Qualifier("testProperties") private TestProperties properties;
 
