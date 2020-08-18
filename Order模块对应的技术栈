@@ -1,0 +1,49 @@
+1.线程池相关参数意义:https://blog.csdn.net/daiqinge/article/details/51179445
+2.定时任务: 1.在类上面使用@EnableScheduling 2.@Scheduled(cron = "${or.data.aging.order.job.time}") 在需要调用的方法上面添加定时任务对应的运行规则
+3.订单支付扫描: 1.定时任务扫描:@Scheduled(cron = "${or.pay.scanUnPayment}")
+    2.ExecutorService executorService = Executors.newFixedThreadPool(1);创建一个可重用的固定线程池
+    
+    /**
+     * 订单支付扫描定时任务
+     * void
+     */
+    public void scanPayment() {
+    // submit有返回值，而execute没有
+        executorService.submit(() -> {
+        // 使用redis分布式锁
+            if (RedisLock.tryLock(LOCK_PAYMENT)) {
+                LOGGER.info("get payment lock success");
+                try {
+                    // 扫描没有支付的订单
+                    paymentService.scanUnPayment();
+                } catch (Exception e) {
+                    LOGGER.error(ExceptionUtils.getFullStackTrace(e));
+                } finally {
+                    RedisLock.release(LOCK_PAYMENT);
+                }
+            } else {
+                LOGGER.info("get payment lock failed");
+            }
+        });
+    }
+     List<UnPaymentOrderPO> unPaymentOrderList = orderMapper.getUnPaymentOrder();
+        CommonHeaders headers = new CommonHeaders();
+        unPaymentOrderList.forEach(unPaymentOrder -> {
+            Long orderId = unPaymentOrder.getOrderId();
+            OrderPO orderPO = orderMapper.getOrderWithIdOrCode(orderId, null);
+            LOGGER.info("order id : " + orderId);
+            String createdBy = unPaymentOrder.getCreatedBy();
+            String transactionId = unPaymentOrder.getTransactionId();
+            // 如果有交易流水号,说明已经支付
+            if (!StringUtils.isEmpty(transactionId)) {
+                // 修改订单状态,改为已支付
+                this.confirmPayment(transactionId, headers);
+            } else {
+                Long createdTime = unPaymentOrder.getCreatedTime();
+                // 如果订单超时没有支付,则取消订单
+                if (isOrderExpired(createdTime)) {
+                    LOGGER.info("order is expired, cancel the order : " + orderId);
+                    cancelOrder(orderPO, createdBy, CancelType.PAY_OVER_TIME);
+                }
+            }
+        });
